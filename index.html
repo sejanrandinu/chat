@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="icon" type="image/x-icon" href="./download.jpg">
+    <title>SER Tech chat</title>
+    <style>
+        body { font-family: sans-serif; }
+        #messages { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; margin-bottom: 10px; }
+        #input { width: 100%; padding: 5px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+    <h1>WebSocket Chat</h1>
+    <div id="messages"></div>
+    <input type="text" id="input" placeholder="Type your message here...">
+
+    <script>
+        // අපේ server එකට WebSocket connection එකක් හදනවා
+        const ws = new WebSocket('ws://localhost:8080');
+
+        const messagesDiv = document.getElementById('messages');
+        const input = document.getElementById('input');
+
+        // Server එකෙන් message එකක් ආවම මොකද වෙන්න ඕන?
+        ws.onmessage = event => {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = event.data;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to the bottom
+        };
+
+        // Input එකේ message එකක් type කරලා 'Enter' ගැහුවම මොකද වෙන්න ඕන?
+        input.addEventListener('keypress', event => {
+            if (event.key === 'Enter') {
+                // message එක server එකට යවනවා
+                ws.send(input.value);
+                input.value = ''; // Input box එක clean කරනවා
+            }
+        });
+    </script>
+
+</body>
+</html> 
